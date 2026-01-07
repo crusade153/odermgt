@@ -15,7 +15,6 @@ const getDataPath = (fileName: string) => {
     const path3 = path.join(process.cwd(), 'public', 'data', fileName);
     if (fs.existsSync(path3)) return path3;
 
-    console.warn(`⚠️ [Warning] 파일을 찾을 수 없습니다: ${path1}`);
     return path1;
 };
 
@@ -24,10 +23,7 @@ const MATERIAL_PATH = getDataPath('material.csv');
 
 // CSV 읽기 헬퍼
 const readCsv = async <T>(filePath: string): Promise<T[]> => {
-    if (!fs.existsSync(filePath)) {
-        console.error(`❌ [Error] 파일이 존재하지 않습니다: ${filePath}`);
-        return [];
-    }
+    if (!fs.existsSync(filePath)) return [];
     const fileBuffer = fs.readFileSync(filePath);
     const decodedContent = iconv.decode(fileBuffer, 'euc-kr');
     const { data } = Papa.parse(decodedContent, { header: true, skipEmptyLines: true });
@@ -41,7 +37,6 @@ export async function getAnalyzedOrders(): Promise<AnalyzedOrder[]> {
 
     return rawHeaders.map((h) => {
         const orderNumber = h['오더'] || '';
-
         const order: SapOrderHeader = {
             orderNumber: orderNumber,
             plant: h['플랜트'],
