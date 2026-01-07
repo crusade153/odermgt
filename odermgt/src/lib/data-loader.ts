@@ -4,24 +4,25 @@ import Papa from 'papaparse';
 import iconv from 'iconv-lite';
 import { SapOrderHeader, SapMaterialDocument, AnalyzedOrder } from '@/types/sap';
 
-// 🔍 경로 탐색 헬퍼 함수
+// 🔍 경로 탐색 헬퍼 (로컬/Vercel 환경 자동 대응)
 const getDataPath = (fileName: string) => {
-    const path1 = path.join(process.cwd(), 'data', fileName);
-    if (fs.existsSync(path1)) return path1;
+    const pathsToTry = [
+        path.join(process.cwd(), 'data', fileName),
+        path.join(process.cwd(), '..', 'data', fileName), // Vercel 모노레포 대응
+        path.join(process.cwd(), 'public', 'data', fileName), // Fallback
+    ];
 
-    const path2 = path.join(process.cwd(), '..', 'data', fileName);
-    if (fs.existsSync(path2)) return path2;
-
-    const path3 = path.join(process.cwd(), 'public', 'data', fileName);
-    if (fs.existsSync(path3)) return path3;
-
-    return path1;
+    for (const p of pathsToTry) {
+        if (fs.existsSync(p)) return p;
+    }
+    console.warn(`⚠️ 파일을 찾을 수 없습니다: ${fileName}`);
+    return pathsToTry[0];
 };
 
 const HEADER_PATH = getDataPath('header.csv');
 const MATERIAL_PATH = getDataPath('material.csv');
 
-// CSV 읽기 헬퍼
+// CSV 읽기 공통 함수
 const readCsv = async <T>(filePath: string): Promise<T[]> => {
     if (!fs.existsSync(filePath)) return [];
     const fileBuffer = fs.readFileSync(filePath);
@@ -30,7 +31,7 @@ const readCsv = async <T>(filePath: string): Promise<T[]> => {
     return data as T[];
 };
 
-// 1. 메인 분석 함수
+// 1. 전체 오더 분석 데이터 가져오기
 export async function getAnalyzedOrders(): Promise<AnalyzedOrder[]> {
     const rawHeaders = await readCsv<any>(HEADER_PATH);
     const rawMaterials = await readCsv<any>(MATERIAL_PATH);
@@ -113,13 +114,13 @@ export async function getAnalyzedOrders(): Promise<AnalyzedOrder[]> {
     });
 }
 
-// 2. 단일 오더 조회 함수 (상세 페이지용)
+// 2. [중요] 상세 페이지에서 쓰는 함수 (이게 없어서 에러났음)
 export async function getAnalyzedOrderById(id: string): Promise<AnalyzedOrder | undefined> {
     const orders = await getAnalyzedOrders();
     return orders.find(o => o.orderNumber === id);
 }
 
-// 3. 오더 헤더 원본 데이터 (복구됨!)
+// 3. 원본 헤더 데이터 (헤더 페이지용)
 export async function getRawHeaders(): Promise<SapOrderHeader[]> {
     const rawHeaders = await readCsv<any>(HEADER_PATH);
     return rawHeaders.map(h => ({
@@ -146,7 +147,7 @@ export async function getRawHeaders(): Promise<SapOrderHeader[]> {
     }));
 }
 
-// 4. 자재 문서 원본 데이터 (복구됨!)
+// 4. 원본 자재 데이터 (자재 페이지용)
 export async function getRawMaterials(): Promise<SapMaterialDocument[]> {
     const rawMaterials = await readCsv<any>(MATERIAL_PATH);
     return rawMaterials.map(m => ({

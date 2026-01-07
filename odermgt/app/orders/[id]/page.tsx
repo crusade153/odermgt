@@ -9,6 +9,7 @@ export default async function OrderPage({
 }: {
     params: Promise<{ id: string }>;
 }) {
+    // [중요] Next.js 15에서는 반드시 await를 써야 합니다.
     const { id } = await params;
     const order = await getAnalyzedOrderById(id);
 
@@ -54,7 +55,7 @@ export default async function OrderPage({
                         </TableHeader>
                         <TableBody>
                             {order.materialLogs.length === 0 ? (
-                                <TableRow><TableCell colSpan={4}>데이터 없음</TableCell></TableRow>
+                                <TableRow><TableCell colSpan={4} className="text-center">데이터 없음</TableCell></TableRow>
                             ) : (
                                 order.materialLogs.map((log, idx) => (
                                     <TableRow key={idx}>
