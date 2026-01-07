@@ -51,4 +51,5 @@ export interface AnalyzedOrder extends SapOrderHeader {
     materialLogs: SapMaterialDocument[]; // 관련 자재 문서들
     isUnfinished: boolean;               // 미마감 여부 (REL 상태인데 DLV/TECO 없음)
     hasCrossMonthError: boolean;         // 월 불일치 여부 (입고월 != 투입월)
+    explanation?: string;                // 👈 소명 사유 (Supabase 연동 시 사용, 없으면 undefined)
 }
