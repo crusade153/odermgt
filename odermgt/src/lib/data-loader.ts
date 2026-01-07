@@ -4,8 +4,8 @@ import Papa from 'papaparse';
 import iconv from 'iconv-lite';
 import { SapOrderHeader, SapMaterialDocument, AnalyzedOrder } from '@/types/sap';
 
-const HEADER_PATH = path.join(process.cwd(), 'public/data/header.csv');
-const MATERIAL_PATH = path.join(process.cwd(), 'public/data/material.csv');
+const HEADER_PATH = path.join(process.cwd(), 'data', 'header.csv');
+const MATERIAL_PATH = path.join(process.cwd(), 'data', 'material.csv');
 
 // CSV 읽기 헬퍼 함수
 const readCsv = async <T>(filePath: string): Promise<T[]> => {
