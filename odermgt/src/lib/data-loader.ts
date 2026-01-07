@@ -34,9 +34,7 @@ const readCsv = async <T>(filePath: string): Promise<T[]> => {
     return data as T[];
 };
 
-// =================================================================
-// 1. 메인 분석 함수 (대시보드 및 리스트용)
-// =================================================================
+// 1. 메인 분석 함수
 export async function getAnalyzedOrders(): Promise<AnalyzedOrder[]> {
     const rawHeaders = await readCsv<any>(HEADER_PATH);
     const rawMaterials = await readCsv<any>(MATERIAL_PATH);
@@ -120,17 +118,13 @@ export async function getAnalyzedOrders(): Promise<AnalyzedOrder[]> {
     });
 }
 
-// =================================================================
 // 2. 단일 오더 조회 함수 (상세 페이지용)
-// =================================================================
 export async function getAnalyzedOrderById(id: string): Promise<AnalyzedOrder | undefined> {
     const orders = await getAnalyzedOrders();
     return orders.find(o => o.orderNumber === id);
 }
 
-// =================================================================
-// 3. (복구됨) 오더 헤더 원본 데이터 조회 (헤더 페이지용)
-// =================================================================
+// 3. 오더 헤더 원본 데이터 (복구됨!)
 export async function getRawHeaders(): Promise<SapOrderHeader[]> {
     const rawHeaders = await readCsv<any>(HEADER_PATH);
     return rawHeaders.map(h => ({
@@ -157,9 +151,7 @@ export async function getRawHeaders(): Promise<SapOrderHeader[]> {
     }));
 }
 
-// =================================================================
-// 4. (복구됨) 자재 문서 원본 데이터 조회 (자재 페이지용)
-// =================================================================
+// 4. 자재 문서 원본 데이터 (복구됨!)
 export async function getRawMaterials(): Promise<SapMaterialDocument[]> {
     const rawMaterials = await readCsv<any>(MATERIAL_PATH);
     return rawMaterials.map(m => ({
