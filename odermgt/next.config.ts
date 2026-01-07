@@ -1,12 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 👇 1. 로컬 에러 해결용 (터보팩 빈 설정 추가)
-  experimental: {
-    turbo: {},
-  },
+  // ❌ 에러 나던 experimental 부분 삭제함
 
-  // 2. Webpack 설정 (CSV 파서 라이브러리용)
+  // 1. Webpack 설정 (CSV 파서 라이브러리용 - 필수)
   webpack: (config, { isServer }) => {
     if (isServer) {
       if (Array.isArray(config.externals)) {
@@ -18,7 +15,7 @@ const nextConfig: NextConfig = {
     return config;
   },
 
-  // 3. Vercel 파일 추적 설정 (data 폴더 강제 포함)
+  // 2. Vercel 파일 추적 설정 (data 폴더 강제 포함 - 필수)
   outputFileTracingIncludes: {
     '/': ['./data/**/*'],
     '/orders/**/*': ['./data/**/*'],
